@@ -98,6 +98,16 @@ export async function telegram_scraper(channel) {
 				child_class = post[j].attributes.class
 			} catch { }
 
+			if (child_class == "tgme_widget_message_roundvideo_player js-message_roundvideo_player") {
+				try {
+					message_video.push(post[j].children[1].children[3].attributes.src)
+				} catch { }
+			}
+
+			if (child_class == "tgme_widget_message_poll js-poll") {
+				message_text += " [Poll]"
+			}
+
 			if (child_class == "tgme_widget_message_text js-message_text") {
 				function message_extractor(input) {
 					let msg = ""
@@ -138,12 +148,17 @@ export async function telegram_scraper(channel) {
 				if (get_views != null) views = get_views
 
 				try {
-					datetime = post[j].children[1].children[3].querySelector(".tgme_widget_message_meta").children[0].attributes.datetime
+					datetime = post[j].children[1].children[5].children[1].children[0].attributes.datetime
 				} catch { }
-
-				// try {
-				// 	datetime = post[j].children[1].children[3].children[1].children[0].attributes.datetime
-				// } catch {}
+				try {
+					datetime = post[j].children[1].children[5].children[0].children[0].attributes.datetime
+				} catch { }
+				try {
+					datetime = post[j].children[1].children[3].children[1].children[0].attributes.datetime
+				} catch { }
+				try {
+					datetime = post[j].children[1].children[3].children[0].children[0].attributes.datetime
+				} catch { }
 			}
 
 			if (child_class == "tgme_widget_message_video_player blured js-message_video_player") {
