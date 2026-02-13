@@ -171,6 +171,14 @@ export async function telegram_scraper(channel) {
 
 			if (child_class == "media_supported_cont") {
 				try {
+					let url = post[j].children[0].attributes.style
+						.split(";")
+						.find(element => element.includes("background-image"))
+						.slice(22, -2)
+					message_photo.push(url)
+				} catch { }
+
+				try {
 					let src = post[j].children[0].children[2].attributes.src
 
 					if (src != null) message_video.push(src)
