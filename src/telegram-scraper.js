@@ -96,12 +96,12 @@ export async function telegram_scraper(channel) {
 			let child_class = ""
 			try {
 				child_class = post[j].attributes.class
-			} catch {}
+			} catch { }
 
 			if (child_class == "tgme_widget_message_roundvideo_player js-message_roundvideo_player") {
 				try {
 					message_video.push(post[j].children[1].children[3].attributes.src)
-				} catch {}
+				} catch { }
 			}
 
 			if (child_class == "tgme_widget_message_poll js-poll") {
@@ -118,7 +118,7 @@ export async function telegram_scraper(channel) {
 
 							try {
 								if (arr[k].attributes.class == "tgme_widget_service_strong_text") include = false
-							} catch {}
+							} catch { }
 
 							if (arr[k].children != null) {
 								if (arr[k].children.length > 0) loop(arr[k].children)
@@ -148,22 +148,22 @@ export async function telegram_scraper(channel) {
 				if (get_views != null) views = get_views
 				try {
 					datetime = post[j].children[1].children[3].children[2].children[0].attributes.datetime
-				} catch {}
+				} catch { }
 				try {
 					datetime = post[j].children[1].children[5].children[2].children[0].attributes.datetime
-				} catch {}
+				} catch { }
 				try {
 					datetime = post[j].children[1].children[5].children[1].children[0].attributes.datetime
-				} catch {}
+				} catch { }
 				try {
 					datetime = post[j].children[1].children[5].children[0].children[0].attributes.datetime
-				} catch {}
+				} catch { }
 				try {
 					datetime = post[j].children[1].children[3].children[1].children[0].attributes.datetime
-				} catch {}
+				} catch { }
 				try {
 					datetime = post[j].children[1].children[3].children[0].children[0].attributes.datetime
-				} catch {}
+				} catch { }
 			}
 
 			if (child_class == "tgme_widget_message_video_player blured js-message_video_player") {
@@ -180,20 +180,34 @@ export async function telegram_scraper(channel) {
 						.split(";")
 						.find(element => element.includes("background-image"))
 						.slice(22, -2)
+
 					message_photo.push(url)
-				} catch {}
+				} catch { }
+
+				try {
+					post[j].children[0].children[0].children[0].children[1].children[1].children.forEach(element => {
+						if (element.tag == "a") {
+							message_photo.push(
+								element.attributes.style
+									.split(";")
+									.find(element => element.includes("background-image"))
+									.slice(22, -2),
+							)
+						}
+					})
+				} catch { }
 
 				try {
 					let src = post[j].children[0].children[2].attributes.src
 
 					if (src != null) message_video.push(src)
-				} catch {}
+				} catch { }
 
 				try {
 					let src = post[j].children[0].children[2].children[1].attributes.src
 
 					if (src != null) message_video.push(src)
-				} catch {}
+				} catch { }
 
 				try {
 					function message_extractor(input) {
@@ -205,7 +219,7 @@ export async function telegram_scraper(channel) {
 
 								try {
 									if (arr[k].attributes.class == "tgme_widget_service_strong_text") include = false
-								} catch {}
+								} catch { }
 
 								if (arr[k].children != null) {
 									if (arr[k].children.length > 0) loop(arr[k].children)
@@ -218,10 +232,14 @@ export async function telegram_scraper(channel) {
 						return msg.replaceAll("/>", " ")
 					}
 
-					let message_node = post[j].children[1].children
-
+					let message_node = null
+					if (!post[j].children[1]) {
+						message_node = post[j].children[0].children[0].children[1].children
+					} else {
+						message_node = post[j].children[1].children
+					}
 					message_text = message_extractor(message_node)
-				} catch {}
+				} catch { }
 			}
 
 			if (child_class == "tgme_widget_message_grouped_wrap js-message_grouped_wrap") {
@@ -232,7 +250,7 @@ export async function telegram_scraper(channel) {
 								if (node[k].attributes.class == "tgme_widget_message_video js-message_video")
 									message_video.push(node[k].attributes.src)
 							}
-						} catch {}
+						} catch { }
 
 						try {
 							if (node[k].attributes.class != null) {
@@ -244,7 +262,7 @@ export async function telegram_scraper(channel) {
 									message_photo.push(photo)
 								}
 							}
-						} catch {}
+						} catch { }
 
 						if (node[k].children != null) {
 							if (node[k].children.length > 0) loop(node[k].children)

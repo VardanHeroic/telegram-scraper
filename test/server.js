@@ -15,19 +15,21 @@ function Item(id, url, content_text, images, date_published, videos) {
 }
 
 const server = http.createServer(async (req, res) => {
-	const telegram_channel = req.url.slice(1)
-
 	res.statusCode = 200
 	res.setHeader("Content-Type", "application/feed+json")
 	res.setHeader("Access-Control-Allow-Origin", "*")
 
+	const telegram_channel = req.url.slice(1)
 	// if (telegram_channel === "feed" || telegram_channel === "feed.xml" || telegram_channel === "rss" || telegram_channel === "rss.xml") {
 	// 	res.end(null)
 	// }
 
-	console.log(telegram_channel)
+	console.log(JSON.stringify(telegram_channel))
 
 	try {
+		if (telegram_channel == "") {
+			throw new Error(404)
+		}
 		const data = await telegram_scraper(telegram_channel)
 		const result = JSON.parse(data)
 		const feed = {
