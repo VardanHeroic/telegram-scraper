@@ -84,6 +84,8 @@ export async function telegram_scraper(channel) {
 
 		let message_video = []
 
+		let message_audio = []
+
 		let views = ""
 
 		let datetime = ""
@@ -101,6 +103,15 @@ export async function telegram_scraper(channel) {
 			if (child_class == "tgme_widget_message_roundvideo_player js-message_roundvideo_player") {
 				try {
 					message_video.push(post[j].children[1].children[3].attributes.src)
+				} catch { }
+			}
+
+			if (
+				child_class == "tgme_widget_message_voice_player js-message_voice_player ready" ||
+				child_class == "tgme_widget_message_voice_player js-message_voice_player"
+			) {
+				try {
+					message_audio.push(post[j].children[1].attributes.src)
 				} catch { }
 			}
 
@@ -296,6 +307,8 @@ export async function telegram_scraper(channel) {
 			message_photo,
 
 			message_video,
+
+			message_audio,
 
 			views,
 

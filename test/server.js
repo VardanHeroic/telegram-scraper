@@ -3,14 +3,15 @@ const http = require("http")
 
 const serverport = process.env.PORT || 8080
 
-function Item(id, url, content_text, images, date_published, videos) {
+function Item(id, url, content_text, images, date_published, videos, audios) {
 	this.id = id
 	this.url = url
 	this.title = content_text.slice(0, 100) + "..."
 	this.content_html = `
+		<p>${content_text}</p>
 		${videos.reduce((fullString, url) => fullString + `<video src=${url} alt=${url}/>`, "")}
-		${images.reduce((fullString, url) => fullString + `<img src=${url} alt=${url}/>`, "")}
-		<p>${content_text}</p>`
+		${audios.reduce((fullString, url) => fullString + `<audio src=${url} alt=${url}/>`, "")}
+		${images.reduce((fullString, url) => fullString + `<img src=${url} alt=${url}/>`, "")}`
 	this.date_published = date_published
 }
 
@@ -39,7 +40,15 @@ const server = http.createServer(async (req, res) => {
 			icon: result[0]["user_photo"],
 			items: result.map(
 				post =>
-					new Item(post.data_post, post.message_url, post.message_text, post.message_photo, post.datetime, post.message_video),
+					new Item(
+						post.data_post,
+						post.message_url,
+						post.message_text,
+						post.message_photo,
+						post.datetime,
+						post.message_video,
+						post.message_audio,
+					),
 			),
 		}
 		res.end(JSON.stringify(feed, null, 4))
