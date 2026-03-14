@@ -10,7 +10,7 @@ function Item(id, url, content_text, images, date_published, videos, audios) {
 	this.content_html = `
 		<p>${content_text}</p>
 		${videos.reduce((fullString, url) => fullString + `<video src=${url} alt=${url}/>`, "")}
-		${audios.reduce((fullString, url) => fullString + `<audio src=${url} alt=${url}/>`, "")}
+		${audios.reduce((fullString, url) => fullString + `<audio src=${url} controls="controls" preload="metadata" alt=${url}/>`, "")}
 		${images.reduce((fullString, url) => fullString + `<img src=${url} alt=${url}/>`, "")}`
 	this.date_published = date_published
 }
